@@ -1,0 +1,9 @@
+/.metadata/
+
+/.settings/
+/Debug/
+/Release/
+/.mxproject
+/*.launch
+/*.log
+/*.scratch
