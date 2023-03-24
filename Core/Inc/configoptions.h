@@ -16,7 +16,7 @@
 
 // Default regional lorawan parameters used in the lorawan ns-3 module as well
 // https://www.thethingsnetwork.org/docs/lorawan/regional-parameters/
-enum class Frequency : uint32_t	// in Hz
+enum class Frequency	// in Hz
 {
 	EU_1 = 868100000,
 	EU_2 = 868300000,
@@ -78,7 +78,6 @@ enum class BaudRate
 	BR_115200 = 115200,
 };
 
-
 struct ConfigOptions
 {
 	// Node address
@@ -107,7 +106,7 @@ struct ConfigOptions
 	 * Module default is 15 but typical for SX1276 is 14.
 	 * ns-3 lorawan module uses 14.
 	 */
-	// TODO: Allow for more Tx Power values using enum
+	// TODO: Use enum for Tx Power values or add range checking
 	const char * m_txPower = "14";
 
 	// Frequency

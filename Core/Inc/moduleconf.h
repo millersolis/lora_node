@@ -9,12 +9,19 @@
 
 #pragma once
 
+// For data collection requirements, a module can be either a sender or a receiver
+#define SENDER	// comment out to signal the module is receiver
+
 #include "configoptions.h"
 
 // Node address
 // Value from 0 to 65535(default 0 for RYLR)
 // Will be stored in EEPROM
-static const char * g_address = "0";
+#ifdef SENDER
+static const char * g_address = "1";
+#else
+static const char * g_address = "2";
+#endif	// SENDER
 
 // [UNUSED] Newtwork ID
 // Value between 0 and 16

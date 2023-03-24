@@ -22,29 +22,41 @@ private:
 	// Config
 	ConfigOptions m_config;
 
-	// Mode
+	// [UNUSED] Mode
+	// TODO: Implement behavior for sleep mode
 	enum class Mode
 	{
 		READY = 0,	// default
 		SLEEP = 1
 	};
-	// TODO: Implement behavior for sleep mode
 	// Mode m_mode = Mode::READY;
 
 public:
+	// Wait until "+READY" command from module.
+	bool waitReady();
+
 	// Software reset
-	// Will not clean configs stored in EEPROM
+	// Will not clean configs stored in EEPROM.
 	bool softwareReset();
+
+	// Applies all configs to the module through UART AT commands.
+	bool setUp();
+
+	// TODO: Allow module to both send and receive if needed in the future.
+	bool startSend();
+	bool startReceive();
 
 	// Set factory settings
 	// Will reset all configs to factory defaults
 	// All configs will need to be set again
 	bool resetFactorySettings();	//TODO
 
+	// TODO: Implement functions to change config and params from the initial.
 	//=====================================================================
 	// Set configs
 
 	bool setAddress(const char* &addr);
+	bool setTxPower(const char* &pwr);
 	bool setNetwork(uint8_t &id);		// TODO
 	bool setNetworkPwd(char * &pwd);	// TODO
 	bool setFrequency(Frequency &freq);
@@ -53,14 +65,14 @@ public:
 	//---------------------------------------------------------------------
 	// Set parameters
 
-	// Sets SF, Bandwidth, Coding rate, Preamble at once
-	// All these have to be set at once using a single AT command
-	bool setParams();
+	bool setSF(SpreadingFactor &sf);	// TODO: Implement and call setParams()
+	bool setBandwidth(Bandwidth &bw);	// TODO: Implement and call setParams()
+	bool setCodingRate(CodingRate &cr);	// TODO: Implement and call setParams()
+	bool setPreamble(Preamble &p);		// TODO: Implement and call setParams()
 
-	bool setSF(SpreadingFactor &sf);
-	bool setBandwidth(Bandwidth &bw);
-	bool setCodingRate(CodingRate &cr);
-	bool setPreamble(Preamble &p);
+	// Sets SF, Bandwidth, Coding rate, Preamble; All at once.
+	// All these have to be set at once using a single AT command.
+	bool setParams();
 
 	//=====================================================================
 	// Get module info
@@ -70,6 +82,9 @@ public:
 
 	// Module unique 12-byte ID (UID)
 	const char* getUID();		// TODO
+
+	// TODO: Implement functions that query the module for bits of config
+	//       by using AT commands ending in '?'
 };
 
 #endif /* INC_RYLRMODULE_H_ */

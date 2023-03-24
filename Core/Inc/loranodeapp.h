@@ -1,5 +1,5 @@
 /*
- * loranodeglue.h
+ * loranodeapp.h
  *
  *  Created on: Mar 17, 2023
  *      Author: Miller Solis

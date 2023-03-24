@@ -9,9 +9,6 @@
 #include "rylrmodule.h"
 #include "moduleconf.h"
 
-//#include <cstring>
-//#include <cinttypes>
-
 //##############################################################################
 
 LoraNodeApp &getApp()
@@ -50,6 +47,16 @@ LoraNodeApp::LoraNodeApp()
 
 void LoraNodeApp::start()
 {
-	m_loraModule.softwareReset();
+	// Wait until "+READY" command from module.
+	m_loraModule.waitReady();
+
+//	m_loraModule.softwareReset();	// TODO: Needed here?
+	m_loraModule.setUp();
+
+#ifdef SENDER
+	m_loraModule.startSend();
+#else
+	m_loraModule.startReceive();
+#endif	// SENDER
 }
 
