@@ -36,7 +36,7 @@ const char *bandwidthToStr(Bandwidth bw)
 	}
 }
 
-const char *SfToStr(SpreadingFactor sf)
+const char *SFToStr(SpreadingFactor sf)
 {
 	switch (sf) {
 	case SpreadingFactor::SF_7:		return "7";

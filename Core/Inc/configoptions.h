@@ -143,7 +143,7 @@ struct ConfigOptions
 // Return a string representation of the enum value
 const char *frequencyToStr(Frequency freq);
 const char *bandwidthToStr(Bandwidth bw);
-const char *SfToStr(SpreadingFactor sf);
+const char *SFToStr(SpreadingFactor sf);
 const char *codingRateToStr(CodingRate cr);
 const char *preambleToStr(Preamble preamble);
 const char *baudRateToStr(BaudRate baudRate);

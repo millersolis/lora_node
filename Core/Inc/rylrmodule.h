@@ -70,8 +70,8 @@ public:
 	bool setCodingRate(CodingRate &cr);	// TODO: Implement and call setParams()
 	bool setPreamble(Preamble &p);		// TODO: Implement and call setParams()
 
-	// Sets SF, Bandwidth, Coding rate, Preamble; All at once.
-	// All these have to be set at once using a single AT command.
+	// Sets SF, Bandwidth, Coding rate, Preamble from m_config. All at once.
+	// All these have to be set using a single AT command.
 	bool setParams();
 
 	//=====================================================================
