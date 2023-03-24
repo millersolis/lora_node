@@ -14,14 +14,16 @@
 // Commands
 #define AT_ADDRESS	"AT+ADDRESS="
 #define AT_CRFOP	"AT+CRFOP="		// Tx Power = Output Power
+#define AT_BAND		"AT+BAND="		// Frequency
 #define AT_RESET	"AT+RESET"
 
 // Command Ending
 #define TERMINATION "\r\n"
 
-// Max param length
+// Param length
 #define MAX_ADDRESS_LEN 5
 #define MAX_TXPOWER_LEN 2			// Tx Power = Output Power
+#define FREQUENCY_LEN 	9			// Fixed length for frequency
 
 // Delay
 // FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.

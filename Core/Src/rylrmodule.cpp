@@ -6,6 +6,7 @@
  */
 
 #include "rylrmodule.h"
+#include "configoptions.h"
 #include "rylruart.h"
 #include "atcommands.h"
 
@@ -68,6 +69,7 @@ bool RYLRModule::setUp()
 {
 	bool success = setAddress(m_config.address);
 	success = success && setTxPower(m_config.txPower);
+	success = success && setFrequency(m_config.freq);
 
 	if (success) {
 		uint8_t debug[] = "DEGUG: RYLRModule setup success.";
@@ -143,7 +145,29 @@ bool RYLRModule::setTxPower(const char * &pwr)
 
 bool RYLRModule::setFrequency(Frequency &freq)
 {
-	return true;
+	constexpr int commandArrSize = sizeof(AT_BAND) + FREQUENCY_LEN + sizeof(TERMINATION);
+
+	// Build command
+	uint8_t command[commandArrSize];
+
+	// TODO: Check tx power range beforehand.
+	int len = concatenateToArr<uint8_t>(command, AT_BAND);
+	len += concatenateToArr<uint8_t>(command + len, frequencyToStr(freq));
+	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+
+	bool success = uartTransmit(command, len);
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_AT);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup frequency (band) failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::setParams()
