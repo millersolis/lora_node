@@ -7,16 +7,13 @@
 
 #include "rylrmodule.h"
 #include "rylruart.h"
+#include "atcommands.h"
+#include "utils.h"
 
-#include "stm32l4xx.h"
 #include "stm32l4xx_hal.h"
-#include "stm32l4xx_hal_def.h"
 
 //#include <cstring>
 //#include <cinttypes>
-
-// defined in auto-generated main.c
-extern UART_HandleTypeDef huart1;
 
 RYLRModule::RYLRModule()
 {
@@ -44,50 +41,33 @@ bool RYLRModule::waitReady()
 bool RYLRModule::softwareReset()
 {
 	uint8_t command[] = "AT+RESET\r\n";
-	HAL_UART_Transmit(&huart1, command, sizeof(command), 1000);
-	return true;
+	return uartTransmit(command, sizeof(command));
 }
 
 bool RYLRModule::setUp()
 {
-	setAddress(m_config.m_address);
+	setAddress(m_config.address);
 
 	return true;
 }
 
-bool RYLRModule::startSend()
+bool RYLRModule::send()
 {
 	return true;
 }
 
 bool RYLRModule::setAddress(const char* &addr)
 {
-	constexpr int commandLen = 11;
-	constexpr int maxAddressChar = 5;
-	constexpr int commandEndLen = 2;
-
-	constexpr int commandArrSize = commandLen + maxAddressChar + commandEndLen;
-	uint8_t command[commandArrSize] = {'A','T','+','A','D','D','R','E','S','S','='};
+	constexpr int commandArrSize = sizeof(AT_ADDRESS) + MAX_ADDRESS_LEN + sizeof(TERMINATION);
 
 	// Build command
-	int offset = commandLen;
+	uint8_t command[commandArrSize];
 
-	// Append address
-	int i = 0;
-	for (; addr[i] != '\0'; i++)
-	{
-		command[offset + i] = (uint8_t) addr[i];
-	}
+	int len = concatenateToArr<uint8_t>(command, AT_ADDRESS);
+	len += concatenateToArr<uint8_t>(command + len, addr);
+	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
 
-	offset += i;
-	// Append command ending
-	command[offset + 1] = (uint8_t) '\r';
-	command[offset + 2] = (uint8_t) '\n';
-
-	int commandSize = offset + commandEndLen + 1;
-
-	HAL_UART_Transmit(&huart1, command, commandSize, 1000);
-	return true;
+	return uartTransmit(command, len);
 }
 
 bool RYLRModule::setTxPower(const char * &pwr)
@@ -103,6 +83,5 @@ bool RYLRModule::setFrequency(Frequency &freq)
 bool RYLRModule::setParams()
 {
 	uint8_t command[] = "AT+RESET\r\n";
-	HAL_UART_Transmit(&huart1, command, sizeof(command), 1000);
-	return true;
+	return uartTransmit(command, sizeof(command));
 }

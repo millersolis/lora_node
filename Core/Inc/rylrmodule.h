@@ -29,7 +29,7 @@ private:
 		READY = 0,	// default
 		SLEEP = 1
 	};
-	// Mode m_mode = Mode::READY;
+	 Mode m_mode = Mode::READY;
 
 public:
 	// Wait until "+READY" command from module.
@@ -42,9 +42,9 @@ public:
 	// Applies all configs to the module through UART AT commands.
 	bool setUp();
 
-	// TODO: Allow module to both send and receive if needed in the future.
-	bool startSend();
-	bool startReceive();
+	// TODO: Allow non-blocking send and receive using interrupts in the future.
+	bool send();
+	bool receive();
 
 	// Set factory settings
 	// Will reset all configs to factory defaults

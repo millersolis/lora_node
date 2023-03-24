@@ -8,6 +8,8 @@
 #include "loranodeapp.h"
 #include "rylrmodule.h"
 #include "moduleconf.h"
+#include "rylruart.h"
+#include "printuart.h"
 
 //##############################################################################
 
@@ -30,16 +32,16 @@ LoraNodeApp::LoraNodeApp()
 	   *  member functions.
 	   */
 	  ConfigOptions initialConfig;
-	  initialConfig.m_address = g_address;
-	  initialConfig.m_networkId = g_networkId;
-	  initialConfig.m_netPwd = g_netPwd;
-	  initialConfig.m_txPower = g_txPower;
-	  initialConfig.m_freq = g_freq;
-	  initialConfig.m_bw = g_bw;
-	  initialConfig.m_sf = g_sf;
-	  initialConfig.m_cr = g_cr;
-	  initialConfig.m_preamble = g_preamble;
-	  initialConfig.m_baudRate = g_baudRate;
+	  initialConfig.address = g_address;
+	  initialConfig.networkId = g_networkId;
+	  initialConfig.netPwd = g_netPwd;
+	  initialConfig.txPower = g_txPower;
+	  initialConfig.freq = g_freq;
+	  initialConfig.bw = g_bw;
+	  initialConfig.sf = g_sf;
+	  initialConfig.cr = g_cr;
+	  initialConfig.preamble = g_preamble;
+	  initialConfig.baudRate = g_baudRate;
 
 	  // Initialize module
 	  m_loraModule = RYLRModule(initialConfig);
@@ -47,16 +49,25 @@ LoraNodeApp::LoraNodeApp()
 
 void LoraNodeApp::start()
 {
-	// Wait until "+READY" command from module.
+	// Wait until module signals it is ready for use.
 	m_loraModule.waitReady();
 
 //	m_loraModule.softwareReset();	// TODO: Needed here?
 	m_loraModule.setUp();
 
 #ifdef SENDER
-	m_loraModule.startSend();
+	startSender();
 #else
-	m_loraModule.startReceive();
+	startReceiver();
 #endif	// SENDER
 }
 
+void LoraNodeApp::startSender()
+{
+	m_loraModule.send();
+}
+
+void LoraNodeApp::startReceiver()
+{
+	m_loraModule.receive();
+}

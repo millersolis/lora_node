@@ -25,5 +25,8 @@ public:
     void start();
 
 private:
+    void startSender();
+    void startReceiver();
+
     RYLRModule m_loraModule;
 };
