@@ -80,7 +80,17 @@ bool RYLRModule::setAddress(const char* &addr)
 	len += concatenateToArr<uint8_t>(command + len, addr);
 	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
 
-	return uartTransmit(command, len);
+	// FIXME: Check for response from module "+OK" or "+ERROR" from uart
+	bool success = uartTransmit(command, len);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup address failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::setTxPower(const char * &pwr)

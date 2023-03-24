@@ -8,7 +8,6 @@
 #include "loranodeapp.h"
 #include "rylrmodule.h"
 #include "moduleconf.h"
-#include "rylruart.h"
 #include "printuart.h"
 
 //##############################################################################
