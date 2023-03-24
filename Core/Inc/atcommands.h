@@ -12,8 +12,9 @@
 
 
 // Commands
-#define AT_ADDRESS "AT+ADDRESS="
+#define AT_ADDRESS	"AT+ADDRESS="
 #define AT_CRFOP	"AT+CRFOP="		// Tx Power = Output Power
+#define AT_RESET	"AT+RESET"
 
 // Command Ending
 #define TERMINATION "\r\n"
@@ -25,5 +26,6 @@
 // Delay
 // FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
 #define DELAY_AFTER_AT 1000
+#define DELAY_AFTER_RESET 3000
 
 #endif /* INC_ATCOMMANDS_H_ */

@@ -42,8 +42,26 @@ bool RYLRModule::waitReady()
 
 bool RYLRModule::softwareReset()
 {
-	uint8_t command[] = "AT+RESET\r\n";
-	return uartTransmit(command, sizeof(command));
+	constexpr int commandArrSize = sizeof(AT_RESET) + sizeof(TERMINATION);
+
+	// Build command
+	uint8_t command[commandArrSize];
+
+	int len = concatenateToArr<uint8_t>(command, AT_RESET);
+	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	bool success = uartTransmit(command, len);
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_RESET);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule software reset failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::setUp()
@@ -130,18 +148,5 @@ bool RYLRModule::setFrequency(Frequency &freq)
 
 bool RYLRModule::setParams()
 {
-	uint8_t command[] = "AT+RESET\r\n";
-	bool success = uartTransmit(command, sizeof(command));
-
-	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
-	HAL_Delay(DELAY_AFTER_AT);
-
-	if (!success) {
-		uint8_t debug[] = "DEGUG: ERROR - RYLRModule software reset failure.";
-		print(debug, sizeof(debug));
-		// Spin lock, hard fault
-		while (true) {}
-	}
-
-	return success;
+	return true;
 }
