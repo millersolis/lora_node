@@ -8,6 +8,8 @@
 #include "rylrmodule.h"
 #include "rylruart.h"
 #include "atcommands.h"
+
+#include "printuart.h"
 #include "utils.h"
 
 #include "stm32l4xx_hal.h"
@@ -46,9 +48,20 @@ bool RYLRModule::softwareReset()
 
 bool RYLRModule::setUp()
 {
-	setAddress(m_config.address);
+	bool success = setAddress(m_config.address);
 
-	return true;
+	if (success) {
+		uint8_t debug[] = "DEGUG: RYLRModule setup success.";
+		print(debug, sizeof(debug));
+	}
+	else {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::send()

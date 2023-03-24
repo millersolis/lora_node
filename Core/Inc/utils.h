@@ -19,13 +19,11 @@ int concatenateToArr(T* arr, const char* str)
 {
 	int i = 0;
 	for (; str[i] != '\0'; i++)
-	{
-			arr[i] = static_cast<T> (str[i]);
+		arr[i] = static_cast<T> (str[i]);
 
-			uint8_t errorMessage[] = "Error: Concatenate cstring to array failed.";
-			print(errorMessage, sizeof(errorMessage));
+//	uint8_t debug[] = "DEGUG: Concatenate cstring to array success.";
+//	print(debug, sizeof(debug));
 
-	}
 	return i;
 }
 
