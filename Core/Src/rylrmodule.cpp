@@ -49,6 +49,7 @@ bool RYLRModule::softwareReset()
 bool RYLRModule::setUp()
 {
 	bool success = setAddress(m_config.address);
+	success = success && setTxPower(m_config.txPower);
 
 	if (success) {
 		uint8_t debug[] = "DEGUG: RYLRModule setup success.";
@@ -80,8 +81,10 @@ bool RYLRModule::setAddress(const char* &addr)
 	len += concatenateToArr<uint8_t>(command + len, addr);
 	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
 
-	// FIXME: Check for response from module "+OK" or "+ERROR" from uart
 	bool success = uartTransmit(command, len);
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_AT);
 
 	if (!success) {
 		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup address failure.";
@@ -95,7 +98,29 @@ bool RYLRModule::setAddress(const char* &addr)
 
 bool RYLRModule::setTxPower(const char * &pwr)
 {
-	return true;
+	constexpr int commandArrSize = sizeof(AT_CRFOP) + MAX_TXPOWER_LEN + sizeof(TERMINATION);
+
+	// Build command
+	uint8_t command[commandArrSize];
+
+	// TODO: Check tx power range beforehand.
+	int len = concatenateToArr<uint8_t>(command, AT_CRFOP);
+	len += concatenateToArr<uint8_t>(command + len, pwr);
+	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+
+	bool success = uartTransmit(command, len);
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_AT);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup tx (output) power failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::setFrequency(Frequency &freq)
@@ -106,5 +131,17 @@ bool RYLRModule::setFrequency(Frequency &freq)
 bool RYLRModule::setParams()
 {
 	uint8_t command[] = "AT+RESET\r\n";
-	return uartTransmit(command, sizeof(command));
+	bool success = uartTransmit(command, sizeof(command));
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_AT);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule software reset failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
