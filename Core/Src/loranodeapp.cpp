@@ -63,7 +63,10 @@ void LoraNodeApp::start()
 
 void LoraNodeApp::startSender()
 {
-	m_loraModule.send();
+	const char* data = "test packet";
+	while (true){
+		m_loraModule.send(g_receiverAddr, sizeof(data), data);
+	}
 }
 
 void LoraNodeApp::startReceiver()

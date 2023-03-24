@@ -35,7 +35,6 @@ bool RYLRModule::waitReady()
 {
 	// Delay to allow module to power up.
 	// FIXME: Wait for incoming "+READY" command from module instead.
-	// FIXME: Remove use of HAL from this class directly.
 	HAL_Delay(150);
 
 	return true;
@@ -48,8 +47,8 @@ bool RYLRModule::softwareReset()
 	// Build command
 	uint8_t command[commandArrSize];
 
-	int len = concatenateToArr<uint8_t>(command, AT_RESET);
-	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	int len = concatenateStrToArr<uint8_t>(command, AT_RESET);
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 	bool success = uartTransmit(command, len);
 
 	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
@@ -86,9 +85,40 @@ bool RYLRModule::setUp()
 	return success;
 }
 
-bool RYLRModule::send()
+bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
 {
-	return true;
+	if (payloadLen > MAX_PAYLOAD_LEN) {
+		uint8_t debug[] = "DEGUG: WARNING - Max payload size exceeded, ignoring overrun.";
+		print(debug, sizeof(debug));
+		payloadLen = MAX_PAYLOAD_LEN;
+	}
+	int commandArrSize = sizeof(AT_SEND) + sizeof(destAddr) +  sizeof(PARAM_SEPARATOR) +
+							digitCount(payloadLen) + sizeof(PARAM_SEPARATOR)+ payloadLen + sizeof(TERMINATION);
+
+	// Build command
+	uint8_t command[commandArrSize];
+
+	int len = concatenateStrToArr<uint8_t>(command, AT_SEND);
+	len += concatenateStrToArr<uint8_t>(command + len, destAddr);
+	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
+	len += concatenateIntToArr<uint8_t>(command + len, payloadLen);
+	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
+	len += concatenateStrToArr<uint8_t>(command + len, data);
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
+
+	bool success = uartTransmit(command, len);
+
+	// FIXME: Poll for response from module "+OK" or "+ERROR" from UART instead.
+	HAL_Delay(DELAY_AFTER_AT);
+
+	if (!success) {
+		uint8_t debug[] = "DEGUG: ERROR - RYLRModule setup address failure.";
+		print(debug, sizeof(debug));
+		// Spin lock, hard fault
+		while (true) {}
+	}
+
+	return success;
 }
 
 bool RYLRModule::setAddress(const char* &addr)
@@ -98,9 +128,9 @@ bool RYLRModule::setAddress(const char* &addr)
 	// Build command
 	uint8_t command[commandArrSize];
 
-	int len = concatenateToArr<uint8_t>(command, AT_ADDRESS);
-	len += concatenateToArr<uint8_t>(command + len, addr);
-	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	int len = concatenateStrToArr<uint8_t>(command, AT_ADDRESS);
+	len += concatenateStrToArr<uint8_t>(command + len, addr);
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 
 	bool success = uartTransmit(command, len);
 
@@ -125,9 +155,9 @@ bool RYLRModule::setTxPower(const char * &pwr)
 	uint8_t command[commandArrSize];
 
 	// TODO: Check tx power range beforehand.
-	int len = concatenateToArr<uint8_t>(command, AT_CRFOP);
-	len += concatenateToArr<uint8_t>(command + len, pwr);
-	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	int len = concatenateStrToArr<uint8_t>(command, AT_CRFOP);
+	len += concatenateStrToArr<uint8_t>(command + len, pwr);
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 
 	bool success = uartTransmit(command, len);
 
@@ -152,9 +182,9 @@ bool RYLRModule::setFrequency(Frequency &freq)
 	uint8_t command[commandArrSize];
 
 	// TODO: Check tx power range beforehand.
-	int len = concatenateToArr<uint8_t>(command, AT_BAND);
-	len += concatenateToArr<uint8_t>(command + len, frequencyToStr(freq));
-	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	int len = concatenateStrToArr<uint8_t>(command, AT_BAND);
+	len += concatenateStrToArr<uint8_t>(command + len, frequencyToStr(freq));
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 
 	bool success = uartTransmit(command, len);
 
@@ -182,15 +212,15 @@ bool RYLRModule::setParams()
 	uint8_t command[commandArrSize];
 
 	// TODO: Check tx power range beforehand.
-	int len = concatenateToArr<uint8_t>(command, AT_PARAMETER);
-	len += concatenateToArr<uint8_t>(command + len, SFToStr(m_config.sf));
-	len += concatenateToArr<uint8_t>(command + len, PARAM_SEPARATOR);
-	len += concatenateToArr<uint8_t>(command + len, bandwidthToStr(m_config.bw));
-	len += concatenateToArr<uint8_t>(command + len, PARAM_SEPARATOR);
-	len += concatenateToArr<uint8_t>(command + len, codingRateToStr(m_config.cr));
-	len += concatenateToArr<uint8_t>(command + len, PARAM_SEPARATOR);
-	len += concatenateToArr<uint8_t>(command + len, preambleToStr(m_config.preamble));
-	len += concatenateToArr<uint8_t>(command + len, TERMINATION);
+	int len = concatenateStrToArr<uint8_t>(command, AT_PARAMETER);
+	len += concatenateStrToArr<uint8_t>(command + len, SFToStr(m_config.sf));
+	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
+	len += concatenateStrToArr<uint8_t>(command + len, bandwidthToStr(m_config.bw));
+	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
+	len += concatenateStrToArr<uint8_t>(command + len, codingRateToStr(m_config.cr));
+	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
+	len += concatenateStrToArr<uint8_t>(command + len, preambleToStr(m_config.preamble));
+	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 
 	bool success = uartTransmit(command, len);
 

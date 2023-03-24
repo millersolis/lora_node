@@ -17,6 +17,7 @@
 #define AT_CRFOP				"AT+CRFOP="			// Tx Power = Output Power
 #define AT_BAND					"AT+BAND="			// Frequency
 #define AT_PARAMETER			"AT+PARAMETER="		// AT+PARAMETER=<SF>,<Bandwidth>,<Coding Rate>,<Preamble>
+#define AT_SEND					"AT+SEND="			// AT+SEND=<Address>,<Payload Length>,<Data>
 
 // Parameter Separator
 #define PARAM_SEPARATOR			","
@@ -28,6 +29,7 @@
 #define MAX_ADDRESS_LEN 		5
 #define MAX_TXPOWER_LEN 		2			// Tx Power = Output Power
 #define MAX_SF_LEN				2
+#define MAX_PAYLOAD_LEN			254			// in bytes
 #define FREQUENCY_LEN 			9			// Fixed length for frequency
 #define BANDWIDTH_LEN			1			// Digit
 #define CODINGRATE_LEN			1			// Digit
