@@ -8,9 +8,16 @@
 #include "loranodeapp.h"
 #include "rylrmodule.h"
 #include "moduleconf.h"
+#include "printuart.h"
 
-//#include <cstring>
-//#include <cinttypes>
+#include "utils.h"
+#include "configoptions.h"
+
+#include "stm32l4xx.h"
+#include "stm32l4xx_hal.h"
+#include "stm32l4xx_hal_def.h"
+
+#include "main.h"
 
 //##############################################################################
 
@@ -33,16 +40,16 @@ LoraNodeApp::LoraNodeApp()
 	   *  member functions.
 	   */
 	  ConfigOptions initialConfig;
-	  initialConfig.m_address = g_address;
-	  initialConfig.m_networkId = g_networkId;
-	  initialConfig.m_netPwd = g_netPwd;
-	  initialConfig.m_txPower = g_txPower;
-	  initialConfig.m_freq = g_freq;
-	  initialConfig.m_bw = g_bw;
-	  initialConfig.m_sf = g_sf;
-	  initialConfig.m_cr = g_cr;
-	  initialConfig.m_preamble = g_preamble;
-	  initialConfig.m_baudRate = g_baudRate;
+	  initialConfig.address = g_address;
+	  initialConfig.networkId = g_networkId;
+	  initialConfig.netPwd = g_netPwd;
+	  initialConfig.txPower = g_txPower;
+	  initialConfig.freq = g_freq;
+	  initialConfig.bw = g_bw;
+	  initialConfig.sf = g_sf;
+	  initialConfig.cr = g_cr;
+	  initialConfig.preamble = g_preamble;
+	  initialConfig.baudRate = g_baudRate;
 
 	  // Initialize module
 	  m_loraModule = RYLRModule(initialConfig);
@@ -50,6 +57,51 @@ LoraNodeApp::LoraNodeApp()
 
 void LoraNodeApp::start()
 {
-	m_loraModule.softwareReset();
+	// Wait until module signals it is ready for use.
+	m_loraModule.waitReady();
+
+//	m_loraModule.softwareReset();	// TODO: Needed here?
+	m_loraModule.setUp();
+
+#ifdef SENDER
+	startSender();
+#else
+	startReceiver();
+#endif	// SENDER
 }
 
+void LoraNodeApp::startSender()
+{
+	const char* data = "test packet";
+	static bool success;
+	while (true){
+		success = m_loraModule.send(g_receiverAddr, sizeof("test packet"), data);
+		if (success) {
+			HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+			reportSentPacket(sizeof(data), data);
+		}
+	}
+}
+
+// Payl;oad lenght in bytes
+void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
+{
+	ConfigOptions currentConfig = m_loraModule.getCurrConfig();
+	// Format for debugging includes SF.
+	// SF: <sf>, SENT: <payload>
+	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof (", SENT: ") + payloadLen;
+
+	// Build message
+	uint8_t message[messageArrSize];
+	int len = concatenateStrToArr<uint8_t>(message, "SF: ");
+	len += concatenateStrToArr<uint8_t>(message + len, SFToStr(currentConfig.sf));
+	len += concatenateStrToArr<uint8_t>(message + len, ", SENT: ");
+	len += concatenateStrToArr<uint8_t>(message + len, data);
+
+	print(message, len);
+}
+
+void LoraNodeApp::startReceiver()
+{
+	m_loraModule.receive();
+}

@@ -1,5 +1,5 @@
 /*
- * loranodeglue.h
+ * loranodeapp.h
  *
  *  Created on: Mar 17, 2023
  *      Author: Miller Solis
@@ -25,5 +25,10 @@ public:
     void start();
 
 private:
+    void startSender();
+    void startReceiver();
+
+    void reportSentPacket(int payloadLen, const char* data);
+
     RYLRModule m_loraModule;
 };

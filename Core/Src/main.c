@@ -43,7 +43,8 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+// NOTE: huart1 used for lora module
+//		 huart2 used for print to console
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +94,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   // Create app instance
   loraNodeAppInit();
-
   // Start app
   loraNodeAppStart();
   /* USER CODE END 2 */

@@ -12,11 +12,11 @@
 
 // Configuration settings available for RYLR module
 // Module specs: https://reyax.com/products/rylr896/
-
+// ======================================================================================================
 
 // Default regional lorawan parameters used in the lorawan ns-3 module as well
 // https://www.thethingsnetwork.org/docs/lorawan/regional-parameters/
-enum class Frequency : uint32_t	// in Hz
+enum class Frequency	// in Hz
 {
 	EU_1 = 868100000,
 	EU_2 = 868300000,
@@ -78,19 +78,18 @@ enum class BaudRate
 	BR_115200 = 115200,
 };
 
-
 struct ConfigOptions
 {
 	// Node address
 	// Value from 0 to 65535(default 0 for RYLR)
 	// Will be stored in EEPROM
-	const char * m_address = "0";
+	const char * address = "0";
 
 	// [UNUSED] Newtwork ID
 	// Value between 0 and 16
 	// Will be stored in EEPROM
 	// TODO: Implement functionality to use custom network id
-	uint8_t m_networkId = 0;	// default to public LoRa network id
+	uint8_t networkId = 0;	// default to public LoRa network id
 
 	// [UNUSED] Network Password (AES128)
 	/**
@@ -98,7 +97,7 @@ struct ConfigOptions
 	* to FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 	 */
 	// TODO: Implement functionality to use network password
-	const char * m_netPwd = "";	// default is no password
+	const char * netPwd = "";	// default is no password
 
 	// Tx Power (RF output power)
 	/**
@@ -107,20 +106,20 @@ struct ConfigOptions
 	 * Module default is 15 but typical for SX1276 is 14.
 	 * ns-3 lorawan module uses 14.
 	 */
-	// TODO: Allow for more Tx Power values using enum
-	const char * m_txPower = "14";
+	// TODO: Use enum for Tx Power values or add range checking
+	const char * txPower = "14";
 
 	// Frequency
-	Frequency m_freq = Frequency::EU_1;
+	Frequency freq = Frequency::EU_1;
 
 	// Bandwidth
-	Bandwidth m_bw = Bandwidth::BW_125k;	// default for EU
+	Bandwidth bw = Bandwidth::BW_125k;	// default for EU
 
 	// Spreading Factor
-	SpreadingFactor m_sf = SpreadingFactor::SF_12;	// default for RYLR
+	SpreadingFactor sf = SpreadingFactor::SF_12;	// default for RYLR
 
 	// Coding Rate
-	CodingRate m_cr = CodingRate::CR_1;	// hard-coded for ns-3 lorawan module
+	CodingRate cr = CodingRate::CR_1;	// hard-coded for ns-3 lorawan module
 
 	// Programmed Preamble
 	/**
@@ -133,18 +132,18 @@ struct ConfigOptions
 	* and the transmitted preamble.
 	* (Ref: Recommended SX1272/76 Settings for EU868 LoRaWAN Network Operation )
 	 */
-	Preamble m_preamble = Preamble::P_7;
+	Preamble preamble = Preamble::P_7;
 
 	// [UNUSED] UART Baud Rate
 	// Will be stored in EEPROM
 	// TODO: Implement functionality to use non-default baud rate.
-	BaudRate m_baudRate = BaudRate::BR_115200;
+	BaudRate baudRate = BaudRate::BR_115200;
 };
 
 // Return a string representation of the enum value
 const char *frequencyToStr(Frequency freq);
 const char *bandwidthToStr(Bandwidth bw);
-const char *SfToStr(SpreadingFactor sf);
+const char *SFToStr(SpreadingFactor sf);
 const char *codingRateToStr(CodingRate cr);
 const char *preambleToStr(Preamble preamble);
 const char *baudRateToStr(BaudRate baudRate);
