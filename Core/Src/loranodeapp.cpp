@@ -72,18 +72,23 @@ void LoraNodeApp::start()
 
 void LoraNodeApp::startSender()
 {
-	const char* data = "test packet";
+	static int counter = 1;
 	static bool success;
 	while (true){
-		success = m_loraModule.send(g_receiverAddr, sizeof("test packet"), data);
+		char data [digitCount(counter)];
+		int len = concatenateIntToArr<char>(data, counter);
+
+		success = m_loraModule.send(g_receiverAddr, len, data);
+
 		if (success) {
 			HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-			reportSentPacket(sizeof(data), data);
+			reportSentPacket(len, data);
 		}
+		counter++;
 	}
 }
 
-// Payl;oad lenght in bytes
+// Payload length in bytes
 void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
 {
 	ConfigOptions currentConfig = m_loraModule.getCurrConfig();

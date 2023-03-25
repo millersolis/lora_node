@@ -12,15 +12,15 @@
 
 // Copy items form one array to another of different type.
 // Returns number of copied elements.
-//template <typename T, typename D>
-//inline int concatenateToArr(T* arr1, D* arr2, int len)
-//{
-//	int i = 0;
-//	for (; i < len; i++)
-//		arr1[i] = static_cast<T> (arr2[i]);
-//
-//	return i;
-//}
+template <typename T, typename D>
+inline int concatenateToArr(T* arr1, D* arr2, int len)
+{
+	int i = 0;
+	for (; i < len; i++)
+		arr1[i] = static_cast<T> (arr2[i]);
+
+	return i;
+}
 
 // Copy cstring terminated on '\0' to an array of type T.
 // Returns number of copied elements.
@@ -34,7 +34,7 @@ inline int concatenateStrToArr(T* arr, const char* str)
 	return i;
 }
 
-// Copy integer as a char to an array of type T.
+// Copy char representation of an integer to an array of type T.
 // Returns number of copied elements
 template <typename T>
 inline int concatenateIntToArr(T* arr, int num)

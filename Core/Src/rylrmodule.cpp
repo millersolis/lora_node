@@ -85,7 +85,7 @@ bool RYLRModule::setUp()
 }
 
 // Payload length in bytes
-bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
+bool RYLRModule::send(const char* destAddr, int payloadLen, char* data)
 {
 	if (payloadLen > MAX_PAYLOAD_LEN) {
 		uint8_t debug[] = "DEGUG: WARNING - Max payload size exceeded, ignoring overrun.";
@@ -102,7 +102,7 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
 	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
 	len += concatenateIntToArr<uint8_t>(command + len, payloadLen);
 	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
-	len += concatenateStrToArr<uint8_t>(command + len, data);
+	len += concatenateToArr<uint8_t, char>(command + len, data, payloadLen);
 	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 
 	bool success = uartTransmit(command, len);
