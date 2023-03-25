@@ -43,7 +43,7 @@ public:
 	bool setUp();
 
 	// TODO: Allow non-blocking send and receive using interrupts in the future.
-	bool send(const char* destAddress, int payloadLen, const char* data);
+	bool send(const char* destAddress, int payloadLen, char* data);
 	bool receive();
 
 	// Set factory settings
