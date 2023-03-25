@@ -46,7 +46,6 @@ bool RYLRModule::softwareReset()
 
 	// Build command
 	uint8_t command[commandArrSize];
-
 	int len = concatenateStrToArr<uint8_t>(command, AT_RESET);
 	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
 	bool success = uartTransmit(command, len);
@@ -85,6 +84,7 @@ bool RYLRModule::setUp()
 	return success;
 }
 
+// Payload length in bytes
 bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
 {
 	if (payloadLen > MAX_PAYLOAD_LEN) {
@@ -97,7 +97,6 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
 
 	// Build command
 	uint8_t command[commandArrSize];
-
 	int len = concatenateStrToArr<uint8_t>(command, AT_SEND);
 	len += concatenateStrToArr<uint8_t>(command + len, destAddr);
 	len += concatenateStrToArr<uint8_t>(command + len, PARAM_SEPARATOR);
@@ -121,13 +120,17 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, const char* data)
 	return success;
 }
 
+const ConfigOptions RYLRModule::getCurrConfig()
+{
+	return m_config;
+}
+
 bool RYLRModule::setAddress(const char* &addr)
 {
 	constexpr int commandArrSize = sizeof(AT_ADDRESS) + MAX_ADDRESS_LEN + sizeof(TERMINATION);
 
 	// Build command
 	uint8_t command[commandArrSize];
-
 	int len = concatenateStrToArr<uint8_t>(command, AT_ADDRESS);
 	len += concatenateStrToArr<uint8_t>(command + len, addr);
 	len += concatenateStrToArr<uint8_t>(command + len, TERMINATION);
@@ -153,7 +156,6 @@ bool RYLRModule::setTxPower(const char * &pwr)
 
 	// Build command
 	uint8_t command[commandArrSize];
-
 	// TODO: Check tx power range beforehand.
 	int len = concatenateStrToArr<uint8_t>(command, AT_CRFOP);
 	len += concatenateStrToArr<uint8_t>(command + len, pwr);
@@ -180,7 +182,6 @@ bool RYLRModule::setFrequency(Frequency &freq)
 
 	// Build command
 	uint8_t command[commandArrSize];
-
 	// TODO: Check tx power range beforehand.
 	int len = concatenateStrToArr<uint8_t>(command, AT_BAND);
 	len += concatenateStrToArr<uint8_t>(command + len, frequencyToStr(freq));
@@ -210,7 +211,6 @@ bool RYLRModule::setParams()
 									PREAMBLE_LEN + sizeof(TERMINATION);
 	// Build command
 	uint8_t command[commandArrSize];
-
 	// TODO: Check tx power range beforehand.
 	int len = concatenateStrToArr<uint8_t>(command, AT_PARAMETER);
 	len += concatenateStrToArr<uint8_t>(command + len, SFToStr(m_config.sf));

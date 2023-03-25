@@ -10,6 +10,15 @@
 #include "moduleconf.h"
 #include "printuart.h"
 
+#include "utils.h"
+#include "configoptions.h"
+
+#include "stm32l4xx.h"
+#include "stm32l4xx_hal.h"
+#include "stm32l4xx_hal_def.h"
+
+#include "main.h"
+
 //##############################################################################
 
 LoraNodeApp &getApp()
@@ -64,9 +73,32 @@ void LoraNodeApp::start()
 void LoraNodeApp::startSender()
 {
 	const char* data = "test packet";
+	static bool success;
 	while (true){
-		m_loraModule.send(g_receiverAddr, sizeof(data), data);
+		success = m_loraModule.send(g_receiverAddr, sizeof("test packet"), data);
+		if (success) {
+			HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+			reportSentPacket(sizeof(data), data);
+		}
 	}
+}
+
+// Payl;oad lenght in bytes
+void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
+{
+	ConfigOptions currentConfig = m_loraModule.getCurrConfig();
+	// Format for debugging includes SF.
+	// SF: <sf>, SENT: <payload>
+	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof (", SENT: ") + payloadLen;
+
+	// Build message
+	uint8_t message[messageArrSize];
+	int len = concatenateStrToArr<uint8_t>(message, "SF: ");
+	len += concatenateStrToArr<uint8_t>(message + len, SFToStr(currentConfig.sf));
+	len += concatenateStrToArr<uint8_t>(message + len, ", SENT: ");
+	len += concatenateStrToArr<uint8_t>(message + len, data);
+
+	print(message, len);
 }
 
 void LoraNodeApp::startReceiver()

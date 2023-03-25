@@ -28,5 +28,7 @@ private:
     void startSender();
     void startReceiver();
 
+    void reportSentPacket(int payloadLen, const char* data);
+
     RYLRModule m_loraModule;
 };

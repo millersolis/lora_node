@@ -51,6 +51,8 @@ public:
 	// All configs will need to be set again
 	bool resetFactorySettings();	//TODO
 
+	const ConfigOptions getCurrConfig();
+
 	// TODO: Implement functions to change config and params from the initial.
 	//=====================================================================
 	// Set configs

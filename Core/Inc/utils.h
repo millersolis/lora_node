@@ -8,29 +8,36 @@
 #ifndef INC_UTILS_H_
 #define INC_UTILS_H_
 
-#include "printuart.h"
-
 #include <cstdint>
 
-// Concatenate cstring terminated on '\0' to an array of type T.
-// Returns number of concatenated elements.
+// Copy items form one array to another of different type.
+// Returns number of copied elements.
+//template <typename T, typename D>
+//inline int concatenateToArr(T* arr1, D* arr2, int len)
+//{
+//	int i = 0;
+//	for (; i < len; i++)
+//		arr1[i] = static_cast<T> (arr2[i]);
+//
+//	return i;
+//}
+
+// Copy cstring terminated on '\0' to an array of type T.
+// Returns number of copied elements.
 template <typename T>
-int concatenateStrToArr(T* arr, const char* str)
+inline int concatenateStrToArr(T* arr, const char* str)
 {
 	int i = 0;
 	for (; str[i] != '\0'; i++)
 		arr[i] = static_cast<T> (str[i]);
 
-//	uint8_t debug[] = "DEGUG: Concatenate cstring to array success.";
-//	print(debug, sizeof(debug));
-
 	return i;
 }
 
-// Concatenate integer to an array of type T.
-// Returns number of concatenated elements
+// Copy integer as a char to an array of type T.
+// Returns number of copied elements
 template <typename T>
-int concatenateIntToArr(T* arr, int num)
+inline int concatenateIntToArr(T* arr, int num)
 {
 	// handle negative numbers
 	if (num < 0) {
@@ -59,7 +66,8 @@ int concatenateIntToArr(T* arr, int num)
 	return i;
 }
 
-int digitCount(int num)
+// Count how many digits an integer has
+inline int digitCount(int num)
 {
 	// handle negative numbers
 	if (num < 0) {
