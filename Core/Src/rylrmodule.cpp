@@ -121,6 +121,7 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, char* data)
 
 bool RYLRModule::receive()
 {
+	initRcvReporting(m_config.sf);
 	enableDMAReceive();
 	return true;
 }
