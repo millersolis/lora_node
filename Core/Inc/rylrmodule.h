@@ -10,6 +10,8 @@
 
 #include "configoptions.h"
 
+bool startReceive();
+
 // Module specs: https://reyax.com/products/rylr896/
 class RYLRModule
 {
@@ -44,7 +46,7 @@ public:
 
 	// TODO: Allow non-blocking send in the future.
 	bool send(const char* destAddress, int payloadLen, char* data);
-	bool startReceive();
+//	bool startReceive();
 
 	// Set factory settings
 	// Will reset all configs to factory defaults

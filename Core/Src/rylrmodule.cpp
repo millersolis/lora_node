@@ -8,6 +8,7 @@
 #include "rylrmodule.h"
 #include "configoptions.h"
 #include "rylruart.h"
+#include "rylrdma.h"
 #include "atcommands.h"
 
 #include "printuart.h"
@@ -16,6 +17,11 @@
 #include "stm32l4xx_hal.h"
 
 //#include <cinttypes>
+
+bool startReceive()
+{
+	return enableDMAReceive();
+}
 
 RYLRModule::RYLRModule()
 {
@@ -117,12 +123,6 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, char* data)
 	}
 
 	return success;
-}
-
-bool RYLRModule::startReceive()
-{
-	initRcvReporting(m_config.sf);
-	return enableDMAReceive();
 }
 
 const ConfigOptions RYLRModule::getCurrConfig()

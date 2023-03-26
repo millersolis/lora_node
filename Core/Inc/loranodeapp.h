@@ -5,7 +5,8 @@
  *      Author: Miller Solis
  */
 
-#pragma once
+#ifndef INC_LORANODEAPP_H_
+#define INC_LORANODEAPP_H_
 
 #include "rylrmodule.h"
 
@@ -15,6 +16,8 @@ class LoraNodeApp;
 
 // Return a reference to the single instance of AeonyxApp
 LoraNodeApp &getApp();
+
+void enableRYRLDMAReceive();
 
 class LoraNodeApp
 {
@@ -32,3 +35,5 @@ private:
 
     RYLRModule m_loraModule;
 };
+
+#endif 	//INC_LORANODEAPP_H_
