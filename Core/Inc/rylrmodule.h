@@ -42,9 +42,9 @@ public:
 	// Applies all configs to the module through UART AT commands.
 	bool setUp();
 
-	// TODO: Allow non-blocking send and receive using interrupts in the future.
+	// TODO: Allow non-blocking send in the future.
 	bool send(const char* destAddress, int payloadLen, char* data);
-	bool receive();
+	bool startReceive();
 
 	// Set factory settings
 	// Will reset all configs to factory defaults

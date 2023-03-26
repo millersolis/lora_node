@@ -35,6 +35,8 @@ inline bool uartTransmit(const uint8_t *pData, uint16_t Size, uint32_t Timeout=H
 #include "printuart.h"
 #include "utils.h"
 
+#include "main.h"
+
 #include <cstring>
 // =================================================================================
 // DMA buffer
@@ -49,10 +51,12 @@ inline void initRcvReporting(SpreadingFactor sf)
 	currSF = sf;
 }
 
-inline void enableDMAReceive()
+inline bool enableDMAReceive()
 {
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rxBuf, RX_BUF_SIZE);
+	HAL_StatusTypeDef success = HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rxBuf, RX_BUF_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+
+	return success == HAL_OK;
 }
 
 extern "C"
@@ -73,7 +77,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		print(mainBuf, len);
 
 		// Re-enable DMA for UART1
-		enableDMAReceive();
+		bool success = enableDMAReceive();
+		if (!success) {
+			  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+		}
 	}
 }
 

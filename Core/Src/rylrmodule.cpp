@@ -119,11 +119,10 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, char* data)
 	return success;
 }
 
-bool RYLRModule::receive()
+bool RYLRModule::startReceive()
 {
 	initRcvReporting(m_config.sf);
-	enableDMAReceive();
-	return true;
+	return enableDMAReceive();
 }
 
 const ConfigOptions RYLRModule::getCurrConfig()

@@ -73,7 +73,7 @@ void LoraNodeApp::start()
 void LoraNodeApp::startSender()
 {
 	static int counter = 1;
-	static bool success;
+	bool success;
 	while (true){
 		char data [digitCount(counter)];
 		int len = concatenateIntToArr<char>(data, counter);
@@ -90,7 +90,10 @@ void LoraNodeApp::startSender()
 
 void LoraNodeApp::startReceiver()
 {
-	m_loraModule.receive();
+	bool success = m_loraModule.startReceive();
+	if (success) {
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+	}
 }
 
 // Payload length in bytes
