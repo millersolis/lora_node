@@ -29,7 +29,7 @@ struct DefaultConfig {
 	inline static const char * g_address = g_senderAddr;
 	#else
 	inline static const char * g_address = g_receiverAddr;
-	#endif	// SENDER
+	#endif	/* SENDER */
 
 	// [UNUSED] Newtwork ID
 	// Value between 0 and 16

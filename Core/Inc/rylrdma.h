@@ -56,12 +56,18 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		// Debugging
 		// memcpy(mainBuf, rxBuf, Size);
 
+
+#ifdef SENDER
+		// Only relay
+		uint16_t len = concatenateToArr<uint8_t, uint8_t>(mainBuf, rxBuf, Size);
+#else
 		// Format for debugging includes SF.
 		// SF: <sf>, +RCV=<Address>,<Length>,<Data>,<RSSI>,<SNR>
 		uint16_t len = concatenateStrToArr<uint8_t>(mainBuf, "SF: ");
 		len += concatenateStrToArr<uint8_t>(mainBuf + len, SFToStr(currSF));
 		len += concatenateStrToArr<uint8_t>(mainBuf + len, " ");
 		len += concatenateToArr<uint8_t, uint8_t>(mainBuf + len, rxBuf, Size);
+#endif	/* SENDER */
 
 		// Report
 		print(mainBuf, len);
