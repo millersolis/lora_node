@@ -20,3 +20,9 @@ void loraNodeAppStart()
 {
     getApp().start();
 }
+
+extern "C"
+void enableDMARcvUART1()
+{
+	enableRYRLDMAReceive();
+}

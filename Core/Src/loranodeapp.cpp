@@ -11,7 +11,7 @@
 #include "printuart.h"
 
 #include "utils.h"
-#include "configoptions.h"
+//#include "configoptions.h"
 
 #include "stm32l4xx.h"
 #include "stm32l4xx_hal.h"
@@ -31,6 +31,17 @@ LoraNodeApp &getApp()
     return app;
 }
 
+void enableRYRLDMAReceive()
+{
+	bool success = startReceive();
+	if (success) {
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+	}
+	else {
+		HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+	}
+}
+
 //##############################################################################
 
 LoraNodeApp::LoraNodeApp()
@@ -40,16 +51,16 @@ LoraNodeApp::LoraNodeApp()
 	   *  member functions.
 	   */
 	  ConfigOptions initialConfig;
-	  initialConfig.address = g_address;
-	  initialConfig.networkId = g_networkId;
-	  initialConfig.netPwd = g_netPwd;
-	  initialConfig.txPower = g_txPower;
-	  initialConfig.freq = g_freq;
-	  initialConfig.bw = g_bw;
-	  initialConfig.sf = g_sf;
-	  initialConfig.cr = g_cr;
-	  initialConfig.preamble = g_preamble;
-	  initialConfig.baudRate = g_baudRate;
+	  initialConfig.address = DefaultConfig::g_address;
+	  initialConfig.networkId = DefaultConfig::g_networkId;
+	  initialConfig.netPwd = DefaultConfig::g_netPwd;
+	  initialConfig.txPower = DefaultConfig::g_txPower;
+	  initialConfig.freq = DefaultConfig::g_freq;
+	  initialConfig.bw = DefaultConfig::g_bw;
+	  initialConfig.sf = DefaultConfig::g_sf;
+	  initialConfig.cr = DefaultConfig::g_cr;
+	  initialConfig.preamble = DefaultConfig::g_preamble;
+	  initialConfig.baudRate = DefaultConfig::g_baudRate;
 
 	  // Initialize module
 	  m_loraModule = RYLRModule(initialConfig);
@@ -73,12 +84,12 @@ void LoraNodeApp::start()
 void LoraNodeApp::startSender()
 {
 	static int counter = 1;
-	static bool success;
+	bool success;
 	while (true){
 		char data [digitCount(counter)];
 		int len = concatenateIntToArr<char>(data, counter);
 
-		success = m_loraModule.send(g_receiverAddr, len, data);
+		success = m_loraModule.send(DefaultConfig::g_receiverAddr, len, data);
 
 		if (success) {
 			HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
@@ -88,13 +99,21 @@ void LoraNodeApp::startSender()
 	}
 }
 
+void LoraNodeApp::startReceiver()
+{
+//	bool success = m_loraModule.startReceive();
+//	if (success) {
+//		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+//	}
+}
+
 // Payload length in bytes
 void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
 {
 	ConfigOptions currentConfig = m_loraModule.getCurrConfig();
 	// Format for debugging includes SF.
 	// SF: <sf>, SENT: <payload>
-	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof (", SENT: ") + payloadLen;
+	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof(", SENT: ") + payloadLen;
 
 	// Build message
 	uint8_t message[messageArrSize];
@@ -106,7 +125,3 @@ void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
 	print(message, len);
 }
 
-void LoraNodeApp::startReceiver()
-{
-	m_loraModule.receive();
-}

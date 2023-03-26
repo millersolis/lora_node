@@ -17,6 +17,8 @@ void loraNodeAppInit();
 // To be called from main() to start the C++ application code
 void loraNodeAppStart();
 
+void enableDMARcvUART1();
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

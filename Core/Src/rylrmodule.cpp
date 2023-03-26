@@ -8,6 +8,7 @@
 #include "rylrmodule.h"
 #include "configoptions.h"
 #include "rylruart.h"
+#include "rylrdma.h"
 #include "atcommands.h"
 
 #include "printuart.h"
@@ -15,8 +16,12 @@
 
 #include "stm32l4xx_hal.h"
 
-//#include <cstring>
 //#include <cinttypes>
+
+bool startReceive()
+{
+	return enableDMAReceive();
+}
 
 RYLRModule::RYLRModule()
 {
