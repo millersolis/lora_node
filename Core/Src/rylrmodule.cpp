@@ -15,7 +15,6 @@
 
 #include "stm32l4xx_hal.h"
 
-//#include <cstring>
 //#include <cinttypes>
 
 RYLRModule::RYLRModule()
@@ -118,6 +117,12 @@ bool RYLRModule::send(const char* destAddr, int payloadLen, char* data)
 	}
 
 	return success;
+}
+
+bool RYLRModule::receive()
+{
+	enableDMAReceive();
+	return true;
 }
 
 const ConfigOptions RYLRModule::getCurrConfig()

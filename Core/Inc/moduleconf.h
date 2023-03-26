@@ -10,7 +10,7 @@
 #pragma once
 
 // For data collection requirements, a module can be either a sender or a receiver
-#define SENDER	// comment out to signal the module is receiver
+//#define SENDER	// comment out to signal the module is receiver
 
 #include "configoptions.h"
 

@@ -88,13 +88,18 @@ void LoraNodeApp::startSender()
 	}
 }
 
+void LoraNodeApp::startReceiver()
+{
+	m_loraModule.receive();
+}
+
 // Payload length in bytes
 void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
 {
 	ConfigOptions currentConfig = m_loraModule.getCurrConfig();
 	// Format for debugging includes SF.
 	// SF: <sf>, SENT: <payload>
-	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof (", SENT: ") + payloadLen;
+	static int messageArrSize = sizeof("SF: ") + sizeof(SFToStr(currentConfig.sf)) + sizeof(", SENT: ") + payloadLen;
 
 	// Build message
 	uint8_t message[messageArrSize];
@@ -106,7 +111,3 @@ void LoraNodeApp::reportSentPacket(int payloadLen, const char* data)
 	print(message, len);
 }
 
-void LoraNodeApp::startReceiver()
-{
-	m_loraModule.receive();
-}
